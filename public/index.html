@@ -9,14 +9,14 @@
     <div class="bg-white p-8 rounded-xl shadow-lg max-w-2xl w-full">
         <h1 class="text-3xl font-bold text-center text-blue-600 mb-6">🏆 2026 월드컵 4강/우승 예측</h1>
         
-        <!-- 8강 대진표 안내 -->
+        <!-- 실제 8강 대진표 반영 -->
         <div class="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-200">
-            <h2 class="font-bold text-blue-800 mb-2">⚽ 현재 8강 대진표</h2>
-            <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                <div>매치 1: 프랑스 vs 포르투갈</div>
-                <div>매치 2: 브라질 vs 독일</div>
-                <div>매치 3: 스페인 vs 네덜란드</div>
-                <div>매치 4: 아르헨티나 vs 이탈리아</div>
+            <h2 class="font-bold text-blue-800 mb-2">⚽ 확정된 8강 대진표 (한국시간 기준)</h2>
+            <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+                <div>매치 1: 프랑스 vs 모로코 (7/10 05:00)</div>
+                <div>매치 2: 스페인 vs 벨기에 (7/11 04:00)</div>
+                <div>매치 3: 노르웨이 vs 잉글랜드 (7/12 06:00)</div>
+                <div>매치 4: 아르헨티나 vs 스위스 (7/12 10:00)</div>
             </div>
         </div>
 
@@ -26,14 +26,14 @@
                 <input type="text" id="nickname" required class="w-full p-2 border rounded" placeholder="이름을 입력하세요">
             </div>
 
-            <!-- 4강 예측 (대진별 선택) -->
+            <!-- 4강 예측 드롭박스 수정 -->
             <div>
                 <label class="block font-semibold mb-2">4강 진출 예상 4팀 (대진별 택1)</label>
                 <div class="grid grid-cols-2 gap-4">
-                    <select class="semi p-2 border rounded" required><option value="">매치 1 승자</option><option>프랑스</option><option>포르투갈</option></select>
-                    <select class="semi p-2 border rounded" required><option value="">매치 2 승자</option><option>브라질</option><option>독일</option></select>
-                    <select class="semi p-2 border rounded" required><option value="">매치 3 승자</option><option>스페인</option><option>네덜란드</option></select>
-                    <select class="semi p-2 border rounded" required><option value="">매치 4 승자</option><option>아르헨티나</option><option>이탈리아</option></select>
+                    <select class="semi p-2 border rounded" required><option value="">매치 1 승자</option><option>프랑스</option><option>모로코</option></select>
+                    <select class="semi p-2 border rounded" required><option value="">매치 2 승자</option><option>스페인</option><option>벨기에</option></select>
+                    <select class="semi p-2 border rounded" required><option value="">매치 3 승자</option><option>노르웨이</option><option>잉글랜드</option></select>
+                    <select class="semi p-2 border rounded" required><option value="">매치 4 승자</option><option>아르헨티나</option><option>스위스</option></select>
                 </div>
             </div>
 
@@ -62,10 +62,8 @@
         const winnerSelect = document.getElementById('winner');
         const runnerUpSelect = document.getElementById('runnerUp');
 
-        // 4강에서 선택된 팀들만 우승/준우승 드롭다운에 채워넣는 로직
         function updateFinalists() {
             const selectedTeams = Array.from(semiSelects).map(s => s.value).filter(v => v);
-            
             const currentWinner = winnerSelect.value;
             const currentRunner = runnerUpSelect.value;
 
@@ -83,7 +81,6 @@
 
         semiSelects.forEach(s => s.addEventListener('change', updateFinalists));
 
-        // 우승팀을 고르면 준우승팀에서 자동 제외되도록 처리
         winnerSelect.addEventListener('change', () => {
             const selectedTeams = Array.from(semiSelects).map(s => s.value).filter(v => v);
             const winner = winnerSelect.value;

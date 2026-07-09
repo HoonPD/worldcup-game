@@ -9,18 +9,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const DATA_FILE = path.join(__dirname, 'data', 'predictions.json');
 
-// [설정] 마감 시간 (예: 2026년 7월 10일 오후 6시 KST)
-const DEADLINE = new Date('2026-07-10T18:00:00+09:00');
+// [설정] 마감 시간: 8강 첫 경기 시작 시간 (2026년 7월 10일 오전 5시 KST)
+const DEADLINE = new Date('2026-07-10T05:00:00+09:00');
 
 // [설정] 운영자가 입력하는 실제 최종 결과 (점수 계산용)
-// 결과가 나오기 전에는 null로 두거나 비워두면 됩니다.
+// 월드컵이 완전히 종료된 후 실제 결과를 여기에 채워 넣으시면 점수가 자동으로 계산됩니다.
 const ACTUAL_RESULT = {
-    semiFinals: ["프랑스", "브라질", "스페인", "아르헨티나"], // 순서 상관없음
-    winner: "브라질",
-    runnerUp: "프랑스"
+    semiFinals: ["프랑스", "스페인", "잉글랜드", "아르헨티나"], // 예시 (순서 상관없음)
+    winner: "프랑스",                                       // 예시
+    runnerUp: "아르헨티나"                                  // 예시
 };
 
-// 데이터 로드 함수
 function loadData() {
     if (!fs.existsSync(path.dirname(DATA_FILE))) {
         fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
@@ -31,9 +30,8 @@ function loadData() {
     return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
 }
 
-// 점수 계산 로직 (우승 40, 준우승 20, 4강 각 10)
 function calculateScore(pred) {
-    if (!ACTUAL_RESULT.winner) return 0; // 아직 결과가 안 나왔으면 0점
+    if (!ACTUAL_RESULT.winner) return 0; // 아직 최종 결과가 안 나왔으면 0점
 
     let score = 0;
     if (pred.winner === ACTUAL_RESULT.winner) score += 40;
@@ -46,14 +44,14 @@ function calculateScore(pred) {
 }
 
 // 1. 예측 제출 API
-app.post('/api/predict', (req,尊) => {
+app.post('/api/predict', (req, res) => {
     if (new Date() > DEADLINE) {
-        return尊.status(403).json({ success: false, message: "마감 시간이 지나 제출할 수 없습니다." });
+        return res.status(403).json({ success: false, message: "마감 시간이 지나 제출할 수 없습니다." });
     }
 
     const { nickname, semiFinals, winner, runnerUp } = req.body;
     if (!nickname || semiFinals.length !== 4 || !winner || !runnerUp) {
-        return尊.status(400).json({ success: false, message: "모든 항목을 올바르게 입력해주세요." });
+        return res.status(400).json({ success: false, message: "모든 항목을 올바르게 입력해주세요." });
     }
 
     const predictions = loadData();
@@ -68,14 +66,13 @@ app.post('/api/predict', (req,尊) => {
     }
 
     fs.writeFileSync(DATA_FILE, JSON.stringify(predictions, null, 2));
-    尊.json({ success: true, message: "예측이 성공적으로 저장되었습니다." });
+    res.json({ success: true, message: "예측이 성공적으로 저장되었습니다." });
 });
 
 // 2. 전체 결과 조회 API
-app.get('/api/results', (req,尊) => {
+app.get('/api/results', (req, res) => {
     const predictions = loadData();
     
-    // 점수 계산 및 포함
     const resultsWithScores = predictions.map(p => ({
         ...p,
         score: calculateScore(p)
@@ -84,7 +81,7 @@ app.get('/api/results', (req,尊) => {
     // 점수 내림차순 정렬
     resultsWithScores.sort((a, b) => b.score - a.score);
 
-    尊.json({
+    res.json({
         deadlinePassed: new Date() > DEADLINE,
         actualResult: ACTUAL_RESULT,
         results: resultsWithScores
