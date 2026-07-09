@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>2026 월드컵 예측 게임</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+    <div class="bg-white p-8 rounded-xl shadow-lg max-w-2xl w-full">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-6">🏆 2026 월드컵 4강/우승 예측</h1>
+        
+        <!-- 8강 대진표 안내 -->
+        <div class="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-200">
+            <h2 class="font-bold text-blue-800 mb-2">⚽ 현재 8강 대진표</h2>
+            <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
+                <div>매치 1: 프랑스 vs 포르투갈</div>
+                <div>매치 2: 브라질 vs 독일</div>
+                <div>매치 3: 스페인 vs 네덜란드</div>
+                <div>매치 4: 아르헨티나 vs 이탈리아</div>
+            </div>
+        </div>
+
+        <form id="predictForm" class="space-y-5">
+            <div>
+                <label class="block font-semibold mb-1">닉네임</label>
+                <input type="text" id="nickname" required class="w-full p-2 border rounded" placeholder="이름을 입력하세요">
+            </div>
+
+            <!-- 4강 예측 (대진별 선택) -->
+            <div>
+                <label class="block font-semibold mb-2">4강 진출 예상 4팀 (대진별 택1)</label>
+                <div class="grid grid-cols-2 gap-4">
+                    <select class="semi p-2 border rounded" required><option value="">매치 1 승자</option><option>프랑스</option><option>포르투갈</option></select>
+                    <select class="semi p-2 border rounded" required><option value="">매치 2 승자</option><option>브라질</option><option>독일</option></select>
+                    <select class="semi p-2 border rounded" required><option value="">매치 3 승자</option><option>스페인</option><option>네덜란드</option></select>
+                    <select class="semi p-2 border rounded" required><option value="">매치 4 승자</option><option>아르헨티나</option><option>이탈리아</option></select>
+                </div>
+            </div>
+
+            <!-- 우승 / 준우승 (하이라이트) -->
+            <div class="p-4 bg-yellow-50 border-2 border-yellow-400 rounded-lg shadow-sm">
+                <h3 class="font-bold text-lg text-yellow-800 mb-3">🥇 최종 결승 결과 예측</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1">우승 팀 (40점)</label>
+                        <select id="winner" class="w-full p-2 border-2 border-yellow-500 bg-white rounded font-bold text-yellow-900" required><option value="">선택하세요</option></select>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1">준우승 팀 (20점)</label>
+                        <select id="runnerUp" class="w-full p-2 border rounded bg-white" required><option value="">선택하세요</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded font-bold hover:bg-blue-700 transition">예측 제출하기</button>
+        </form>
+        <div class="text-center mt-4"><a href="dashboard.html" class="text-blue-500 hover:underline">👉 전체 결과 대시보드 보기</a></div>
+    </div>
+
+    <script>
+        const semiSelects = document.querySelectorAll('.semi');
+        const winnerSelect = document.getElementById('winner');
+        const runnerUpSelect = document.getElementById('runnerUp');
+
+        // 4강에서 선택된 팀들만 우승/준우승 드롭다운에 채워넣는 로직
+        function updateFinalists() {
+            const selectedTeams = Array.from(semiSelects).map(s => s.value).filter(v => v);
+            
+            const currentWinner = winnerSelect.value;
+            const currentRunner = runnerUpSelect.value;
+
+            winnerSelect.innerHTML = '<option value="">선택하세요</option>';
+            runnerUpSelect.innerHTML = '<option value="">선택하세요</option>';
+
+            selectedTeams.forEach(team => {
+                winnerSelect.innerHTML += `<option value="${team}">${team}</option>`;
+                runnerUpSelect.innerHTML += `<option value="${team}">${team}</option>`;
+            });
+
+            winnerSelect.value = selectedTeams.includes(currentWinner) ? currentWinner : "";
+            runnerUpSelect.value = selectedTeams.includes(currentRunner) ? currentRunner : "";
+        }
+
+        semiSelects.forEach(s => s.addEventListener('change', updateFinalists));
+
+        // 우승팀을 고르면 준우승팀에서 자동 제외되도록 처리
+        winnerSelect.addEventListener('change', () => {
+            const selectedTeams = Array.from(semiSelects).map(s => s.value).filter(v => v);
+            const winner = winnerSelect.value;
+            
+            runnerUpSelect.innerHTML = '<option value="">선택하세요</option>';
+            selectedTeams.forEach(team => {
+                if(team !== winner) {
+                    runnerUpSelect.innerHTML += `<option value="${team}">${team}</option>`;
+                }
+            });
+        });
+
+        document.getElementById('predictForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const semiFinals = Array.from(semiSelects).map(s => s.value);
+            const nickname = document.getElementById('nickname').value;
+            const winner = winnerSelect.value;
+            const runnerUp = runnerUpSelect.value;
+
+            const res = await fetch('/api/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nickname, semiFinals, winner, runnerUp })
+            });
+            const data = await res.json();
+            alert(data.message);
+            if(data.success) location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>결과 대시보드</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">📊 참여자 예측 리스트 및 순위</h1>
+            <a href="index.html" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">◀ 예측하기</a>
+        </div>
+
+        <!-- 스코어 보드 테이블 (줄바꿈 방지를 위해 스크롤 및 무조건 한 줄 처리) -->
+        <div class="overflow-x-auto border rounded-lg">
+            <table class="w-full text-left border-collapse min-w-[900px]">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm font-semibold">
+                        <th class="p-4 whitespace-nowrap">순위</th>
+                        <th class="p-4 whitespace-nowrap">닉네임</th>
+                        <th class="p-4 whitespace-nowrap text-blue-600">Score (총 100점)</th>
+                        <th class="p-4 whitespace-nowrap">4강 예측 팀</th>
+                        <th class="p-4 whitespace-nowrap text-yellow-600">우승 예측</th>
+                        <th class="p-4 whitespace-nowrap text-orange-600">준우승 예측</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody" class="divide-y divide-gray-100">
+                    <!-- JS에서 동적으로 열이 추가됩니다 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function loadDashboard() {
+            const res = await fetch('/api/results');
+            const data = await res.json();
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '';
+
+            data.results.forEach((row, index) => {
+                const isFirst = index === 0 && row.score > 0;
+                // 현시점 1등인 경우 최상단 하이라이트 스타일 적용
+                const rowClass = isFirst ? 'bg-amber-100 font-bold border-2 border-amber-400' : 'hover:bg-gray-50';
+                const rankBadge = isFirst ? '🥇 1등' : `${index + 1}등`;
+
+                tbody.innerHTML += `
+                    <tr class="${rowClass} text-gray-800">
+                        <td class="p-4 whitespace-nowrap">${rankBadge}</td>
+                        <td class="p-4 whitespace-nowrap font-medium">${row.nickname}</td>
+                        <td class="p-4 whitespace-nowrap text-lg font-bold ${isFirst ? 'text-amber-700':'text-blue-600'}">${row.score}점</td>
+                        <td class="p-4 whitespace-nowrap text-sm text-gray-600">${row.semiFinals.join(', ')}</td>
+                        <td class="p-4 whitespace-nowrap font-semibold text-yellow-700">${row.winner}</td>
+                        <td class="p-4 whitespace-nowrap font-semibold text-orange-700">${row.runnerUp}</td>
+                    </tr>
+                `;
+            });
+            
+            if(data.results.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400">아직 제출된 예측이 없습니다.</td></tr>`;
+            }
+        }
+        loadDashboard();
+    </script>
+</body>
+</html>
