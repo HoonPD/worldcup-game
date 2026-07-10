@@ -6,55 +6,80 @@
     <title>2026 월드컵 예측 대시보드</title>
     <style>
         body { font-family: 'Malgun Gothic', sans-serif; background: #f4f6f9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; color: #1a365d; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { text-align: center; color: #1a365d; margin-bottom: 30px; }
+        h2 { color: #1a365d; font-size: 20px; margin-top: 30px; border-left: 4px solid #1a365d; padding-left: 10px; }
         
-        /* 🏆 내 결과 하이라이트 박스 스타일 */
+        /* 🏆 [신규] 상단 오피셜 실제 결과 현황판 스타일 */
+        .official-results-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .result-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 4px solid #cbd5e1;
+        }
+        .card-winner { border-top-color: #d97706; background: #fef3c7; }
+        .card-runner { border-top-color: #475569; background: #f1f5f9; }
+        .card-semi { border-top-color: #2563eb; }
+        .result-card h3 { margin: 0 0 8px 0; font-size: 14px; color: #64748b; text-transform: uppercase; }
+        .result-card .team-name { font-size: 18px; font-weight: bold; color: #1e293b; }
+        .result-card .empty-team { font-size: 14px; color: #94a3b8; font-style: italic; }
+
+        /* 👤 내 결과 요약 하이라이트 박스 */
         .my-highlight-box {
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
             color: white;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 15px 20px;
+            border-radius: 10px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
         }
-        .my-highlight-box h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px; }
-        
-        /* 점수 상세 내역 뱃지 */
-        .score-breakdown { font-size: 13px; color: #e0f2fe; margin-top: 8px; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 6px; }
+        .my-highlight-box h3 { margin: 0 0 8px 0; font-size: 15px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; }
+        .score-breakdown { font-size: 12px; color: #e0f2fe; margin-top: 6px; background: rgba(0,0,0,0.15); padding: 6px 10px; border-radius: 4px; }
         
         /* 랭킹 테이블 스타일 */
-        .ranking-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .ranking-table th, .ranking-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #edf2f7; }
-        .ranking-table th { background-color: #1a365d; color: white; font-weight: bold; }
+        .ranking-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .ranking-table th, .ranking-table td { padding: 14px 12px; text-align: center; border-bottom: 1px solid #edf2f7; }
+        .ranking-table th { background-color: #1a365d; color: white; font-weight: bold; font-size: 14px; }
         .ranking-table tr:hover { background-color: #f8fafc; }
+        .row-highlight { background-color: #f0f7ff !important; font-weight: bold; border-left: 4px solid #3b82f6; }
         
-        /* 테이블 내 내 열 하이라이트 */
-        .row-highlight { background-color: #eff6ff !important; font-weight: bold; border-left: 5px solid #3b82f6; }
-        
-        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .badge-winner { background-color: #fef3c7; color: #d97706; }
-        .badge-runner { background-color: #f1f5f9; color: #475569; }
+        /* 🎯 [신규] 적중 여부 미니 배지 스타일 */
+        .hit-badge { display: inline-block; padding: 3px 6px; margin: 2px; border-radius: 4px; font-size: 12px; background-color: #f1f5f9; color: #64748b; }
+        .hit-success { background-color: #dcfce7 !important; color: #15803d !important; font-weight: bold; box-shadow: 0 1px 3px rgba(21,128,61,0.2); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏆 실시간 예측 결과 대시보드</h1>
+    <h1>🏆 2026 월드컵 실시간 예측 대시보드</h1>
     
-    <!-- 1. 최상단 내 결과 하이라이트 구역 -->
+    <!-- 🟢 [신규] 1. 최상단 공식 경기 결과 오피셜 현황판 -->
+    <h2>📢 대회의 실제 현재 상황 (Official)</h2>
+    <div class="official-results-board" id="officialBoard">
+        <!-- 스크립트에서 동적으로 주입 -->
+    </div>
+
+    <!-- 2. 내 결과 하이라이트 구역 -->
     <div id="myPredictionArea"></div>
 
-    <!-- 2. 전체 실시간 순위표 구역 -->
-    <h2>📊 실시간 랭킹 순위</h2>
+    <!-- 3. 전체 실시간 순위표 구역 -->
+    <h2>📊 전체 참가자 순위 및 실시간 대조</h2>
     <table class="ranking-table">
         <thead>
             <tr>
-                <th>순위</th>
-                <th>닉네임</th>
-                <th>4강 예측팀</th>
-                <th>우승 / 준우승</th>
-                <th>총점</th>
+                <th style="width: 8%;">순위</th>
+                <th style="width: 17%;">닉네임</th>
+                <th style="width: 35%;">예측한 4강 진출팀 (초록=적중)</th>
+                <th style="width: 25%;">예측 우승 / 준우승</th>
+                <th style="width: 15%;">실시간 총점</th>
             </tr>
         </thead>
         <tbody id="rankingBody">
@@ -64,7 +89,6 @@
 </div>
 
 <script>
-    // 예측 페이지에서 저장한 내 닉네임 가져오기
     const myNickname = localStorage.getItem('worldcup_nickname');
 
     async function loadDashboard() {
@@ -75,6 +99,9 @@
             const actual = data.actualResult;
             const results = data.results;
             
+            // 1. 상단 공식 결과 보드 그리기
+            renderOfficialBoard(actual);
+            
             const rankingBody = document.getElementById('rankingBody');
             const myPredictionArea = document.getElementById('myPredictionArea');
             
@@ -83,73 +110,98 @@
             
             let myData = null;
 
-            // 1. 전체 순위표 리스트 렌더링
+            // 2. 전체 참여자 리스트 및 적중 하이라이트 그리기
             results.forEach((user, index) => {
                 const isMe = user.nickname === myNickname;
-                if (isMe) myData = { ...user, rank: index + 1 }; // 내 데이터 따로 저장
-
-                // 점수 상세 계산 과정 텍스트 만들기
-                const detailText = getScoreBreakdownText(user, actual);
+                if (isMe) myData = { ...user, rank: index + 1 };
 
                 const row = document.createElement('tr');
                 if (isMe) row.className = 'row-highlight';
-                
+
+                // 4강팀 매칭 태그 생성 (실제 결과에 있으면 초록색 불 들어옴)
+                const semiTags = user.semiFinals.map(team => {
+                    const isHit = actual.semiFinals.includes(team);
+                    return `<span class="hit-badge ${isHit ? 'hit-success' : ''}">${team}</span>`;
+                }).join('');
+
+                // 우승 / 준우승 매칭 처리
+                const isWinnerHit = actual.winner && user.winner === actual.winner;
+                const isRunnerHit = actual.runnerUp && user.runnerUp === actual.runnerUp;
+
+                const winnerTag = `<span class="hit-badge ${isWinnerHit ? 'hit-success' : ''}">🥇 우승: ${user.winner}</span>`;
+                const runnerTag = `<span class="hit-badge ${isRunnerHit ? 'hit-success' : ''}">🥈 준우승: ${user.runnerUp}</span>`;
+
+                const breakdownText = getScoreBreakdownText(user, actual);
+
                 row.innerHTML = `
                     <td>${index + 1}위</td>
-                    <td>${user.nickname} ${isMe ? '👤 (나)' : ''}</td>
-                    <td>${user.semiFinals.join(', ')}</td>
-                    <td>
-                        <span class="badge badge-winner">🥇 ${user.winner}</span><br>
-                        <span class="badge badge-runner">🥈 ${user.runnerUp}</span>
-                    </td>
-                    <td title="${detailText}"><strong>${user.score}점</strong></td>
+                    <td>${user.nickname} ${isMe ? '👤' : ''}</td>
+                    <td>${semiTags}</td>
+                    <td>${winnerTag}<br>${runnerTag}</td>
+                    <td title="${breakdownText}"><strong>${user.score}점</strong></td>
                 `;
                 rankingBody.appendChild(row);
             });
 
-            // 2. 내가 참여한 경우, 최상단에 하이라이트 보드 생성
+            // 3. 내 결과가 존재하면 상단 개인 서머리 패널 노출
             if (myData) {
                 const myBreakdown = getScoreBreakdownText(myData, actual);
                 myPredictionArea.innerHTML = `
                     <div class="my-highlight-box">
-                        <h2>👤 나의 예측 요약 및 실시간 등수 (현재 ${myData.rank}위)</h2>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div><strong>내가 픽한 4강:</strong> ${myData.semiFinals.join(', ')}</div>
-                            <div><strong>우승 / 준우승:</strong> 🥇 ${myData.winner} / 🥈 ${myData.runnerUp}</div>
+                        <h3>👤 나의 실시간 등수 현황: 현재 ${myData.rank}위</h3>
+                        <div style="font-size: 14px;">
+                            내가 픽한 조합 ➡️ [4강]: ${myData.semiFinals.join(', ')} | [우승]: ${myData.winner} | [준우승]: ${myData.runnerUp}
                         </div>
                         <div class="score-breakdown">
-                            <strong>🎯 점수 획득 상세 내역:</strong> ${myBreakdown} ➡️ <strong>총 ${myData.score}점</strong>
+                            <strong>🎯 실시간 획득 점수 상세:</strong> ${myBreakdown} ➡️ <strong>총 ${myData.score}점</strong>
                         </div>
-                    </div>
-                `;
-            } else {
-                myPredictionArea.innerHTML = `
-                    <div style="background: #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: #4a5568;">
-                        아직 예측에 참여하지 않으셨거나, 다른 기기에서 접속하셨습니다.
                     </div>
                 `;
             }
 
         } catch (error) {
-            console.error('대시보드 로드 실패:', error);
+            console.error('대시보드 데이터를 불러오지 못했습니다.', error);
         }
     }
 
-    // 🎯 백엔드 로직과 정확히 일치하는 점수 쪼개기 도우미 함수
+    // 📢 오피셜 보드 렌더링 함수
+    function renderOfficialBoard(actual) {
+        const board = document.getElementById('officialBoard');
+        
+        // 4강팀 노출 데이터 가공
+        const semiTeamsText = actual.semiFinals && actual.semiFinals.length > 0 
+            ? actual.semiFinals.join(', ') 
+            : `<span class="empty-team">진행 중...</span>`;
+
+        board.innerHTML = `
+            <div class="result-card card-winner">
+                <h3>🏆 최종 우승국</h3>
+                <div class="${actual.winner ? 'team-name' : 'empty-team'}">${actual.winner || '결정 전'}</div>
+            </div>
+            <div class="result-card card-runner">
+                <h3>🥈 최종 준우승국</h3>
+                <div class="${actual.runnerUp ? 'team-name' : 'empty-team'}">${actual.runnerUp || '결정 전'}</div>
+            </div>
+            <div class="result-card card-semi">
+                <h3>⚽ 확정된 4강 진출국</h3>
+                <div class="team-name" style="font-size:15px;">${semiTeamsText}</div>
+            </div>
+        `;
+    }
+
+    // 점수 가이드라인 툴팁 및 텍스트 믹싱 함수
     function getScoreBreakdownText(user, actual) {
         let semiCount = 0;
         user.semiFinals.forEach(team => {
             if (actual.semiFinals.includes(team)) semiCount++;
         });
         const semiScore = semiCount * 10;
-
         const winnerScore = (actual.winner && user.winner === actual.winner) ? 40 : 0;
         const runnerScore = (actual.runnerUp && user.runnerUp === actual.runnerUp) ? 30 : 0;
 
         return `4강 적중 ${semiCount}팀 (+${semiScore}점) | 우승 적중 (+${winnerScore}점) | 준우승 적중 (+${runnerScore}점)`;
     }
 
-    // 페이지 열리면 로드
     loadDashboard();
 </script>
 </body>
