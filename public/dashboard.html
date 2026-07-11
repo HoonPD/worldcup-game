@@ -29,11 +29,10 @@
                         <th class="px-6 py-4 text-center">🥇 우승</th>
                         <th class="px-6 py-4 text-center">🥈 준우승</th>
                         <th class="px-6 py-4 text-center">총점</th>
-                        <th class="px-6 py-4 text-center">제출 시간</th> <!-- 💡 시간 컬럼 추가 -->
+                        <th class="px-6 py-4 text-center">제출 시간</th>
                     </tr>
                 </thead>
                 <tbody id="leaderboardBody" class="divide-y divide-gray-100">
-                    <!-- 자바스크립트로 데이터가 채워지는 공간 -->
                     <tr>
                         <td colspan="7" class="px-6 py-10 text-center text-gray-500">데이터를 불러오는 중입니다...</td>
                     </tr>
@@ -43,11 +42,11 @@
     </div>
 
     <script>
-        // 날짜 포맷 함수 (ISO 시간을 "07/11 16:14" 형태로 변환)
+        // 날짜 포맷 함수 (ISO 시간을 "MM/DD HH:mm" 형태로 변환)
         function formatDate(isoString) {
             if (!isoString) return "-";
             const date = new Date(isoString);
-            if (isNaN(date.getTime())) return "-"; // 유효하지 않은 날짜 처리
+            if (isNaN(date.getTime())) return "-";
             
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
@@ -62,17 +61,12 @@
             const tbody = document.getElementById('leaderboardBody');
 
             try {
-                // 백엔드 API 호출 (실제 환경에 맞게 엔드포인트를 맞추세요)
-                const res = await fetch('/api/predictions'); 
-                const predictions = await res.json(); 
+                // 서버 API 통신 (/api/results 주소 매칭)
+                const res = await fetch('/api/results'); 
+                const data = await res.json(); 
 
-                // 만약 서버에서 점수 정렬을 안 해줬다면 프론트엔드에서 1차 점수, 2차 시간 순으로 정렬
-                predictions.sort((a, b) => {
-                    if ((b.score || 0) !== (a.score || 0)) {
-                        return (b.score || 0) - (a.score || 0); // 점수 높은 순
-                    }
-                    return new Date(a.submittedAt || 0) - new Date(b.submittedAt || 0); // 시간 빠른 순
-                });
+                // 객체 내부의 결과 배열(results) 추출
+                const predictions = data.results || []; 
 
                 tbody.innerHTML = '';
 
@@ -82,12 +76,9 @@
                 }
 
                 predictions.forEach((user, index) => {
-                    // 방금 제출한 본인 아이디 하이라이트 처리
                     const isMe = user.nickname === myNickname;
                     const rowClass = isMe ? 'bg-yellow-50 font-semibold' : 'hover:bg-gray-50';
                     const rankBadge = index === 0 ? '🥇 1등' : index === 1 ? '🥈 2등' : index === 2 ? '🥉 3등' : `${index + 1}등`;
-
-                    // 4강 팀 배열을 보기 좋게 쉼표로 연결
                     const teamsText = user.semiFinals ? user.semiFinals.filter(v => v).join(', ') : '-';
 
                     tbody.innerHTML += `
@@ -103,17 +94,17 @@
                             <td class="px-6 py-4 text-center font-bold text-amber-600">${user.winner || '-'}</td>
                             <td class="px-6 py-4 text-center font-bold text-gray-500">${user.runnerUp || '-'}</td>
                             <td class="px-6 py-4 text-center font-extrabold text-blue-600 text-base">${user.score || 0}점</td>
-                            <td class="px-6 py-4 text-center text-xs text-gray-500">${formatDate(user.submittedAt)}</td>
+                            <td class="px-6 py-4 text-center text-xs text-gray-500">${formatDate(user.timestamp)}</td>
                         </tr>
                     `;
                 });
 
             } catch (error) {
+                console.error("대시보드 렌더링 실패:", error);
                 tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-10 text-center text-red-500 font-semibold">데이터를 가져오는 중 오류가 발생했습니다.</td></tr>`;
             }
         }
 
-        // 페이지 로드 시 대시보드 실시간 렌더링
         window.onload = loadDashboard;
     </script>
 </body>
