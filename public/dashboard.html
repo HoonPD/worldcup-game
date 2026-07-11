@@ -7,44 +7,97 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-6">
-    <div class="max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+    <div class="max-w-6xl mx-auto space-y-6">
         
         <!-- 상단 헤더 영역 -->
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">📊 유저별 예측 현황 대시보드</h1>
-            <a href="index.html" class="bg-blue-500 text-white px-4 py-2 rounded font-semibold hover:bg-blue-600 transition">↩ 내 예측 수정/참여하기</a>
+        <div class="flex justify-between items-center bg-white p-6 rounded-xl shadow-md">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">📊 2026 월드컵 예측 현황 대시보드</h1>
+                <p class="text-gray-500 text-sm mt-1">실시간 경기 결과와 참가자들의 스코어를 확인하세요.</p>
+            </div>
+            <a href="index.html" class="bg-blue-500 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-600 transition shadow-sm">↩ 내 예측 수정/참여하기</a>
         </div>
 
-        <!-- 실시간 스코어 보드 및 안내 상자 -->
-        <div class="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6 text-sm text-amber-900">
+        <!-- 🏆 [복구] 실시간 오피셜 결과 하이라이트 카드 섹션 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- 우승팀 카드 (가장 하이라이트) -->
+            <div class="bg-gradient-to-br from-amber-500 to-yellow-600 p-6 rounded-xl shadow-lg text-white relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 text-yellow-300/20 text-9xl font-extrabold">🥇</div>
+                <span class="bg-amber-700/40 text-xs uppercase tracking-wider px-2.5 py-1 rounded-full font-bold">Official Winner</span>
+                <h3 class="text-lg font-medium mt-2 text-amber-100">최종 우승국</h3>
+                <p id="officialWinner" class="text-3xl font-black mt-1 drop-shadow-sm">결정 대기 중</p>
+            </div>
+
+            <!-- 준우승팀 카드 -->
+            <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-slate-400 relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 text-slate-200 text-7xl font-bold">🥈</div>
+                <span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-full font-bold">Runner-Up</span>
+                <h3 class="text-sm font-medium text-gray-500 mt-2">최종 준우승국</h3>
+                <p id="officialRunnerUp" class="text-2xl font-bold text-gray-800 mt-1">결정 대기 중</p>
+            </div>
+
+            <!-- 4강 진출팀 카드 -->
+            <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-500 relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 text-blue-50 text-7xl font-bold">⚽</div>
+                <span class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">Semi-Finalists</span>
+                <h3 class="text-sm font-medium text-gray-500 mt-2">오피셜 4강 진출팀</h3>
+                <p id="officialSemiFinals" class="text-base font-bold text-gray-800 mt-2 tracking-tight">프랑스, 스페인, ...</p>
+            </div>
+        </div>
+
+        <!-- 🔍 [신규] 내 예측 vs 오피셜 결과 실시간 일대일 비교 보드 -->
+        <div id="myComparisonBoard" class="bg-blue-600 text-white p-6 rounded-xl shadow-md hidden">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="bg-blue-800 text-xs px-2 py-1 rounded font-bold uppercase tracking-wider">My Status</span>
+                <h2 class="text-xl font-bold"><span id="myUsernameDisplay" class="underline decoration-yellow-400 underline-offset-4"></span>님의 실시간 매칭 분석</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm mt-4 bg-blue-700/50 p-4 rounded-lg">
+                <div>
+                    <span class="text-blue-200 block text-xs">내가 맞춘 4강 진출팀</span>
+                    <span id="myMatchingSemis" class="text-base font-bold mt-0.5 block">-</span>
+                </div>
+                <div>
+                    <span class="text-blue-200 block text-xs">우승팀 적중 여부</span>
+                    <span id="myWinnerStatus" class="text-base font-bold mt-0.5 block">-</span>
+                </div>
+                <div>
+                    <span class="text-blue-200 block text-xs">준우승팀 적중 여부</span>
+                    <span id="myRunnerStatus" class="text-base font-bold mt-0.5 block">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 안내 사항 -->
+        <div class="bg-amber-50 border border-amber-200 p-4 rounded-lg text-sm text-amber-900">
             💡 <strong>동점자 처리 안내:</strong> 스코어가 동일할 경우, 하단의 <strong>제출 시간</strong>이 더 빠른 유저가 상위 순위로 인정됩니다.
         </div>
 
-        <!-- 랭킹 테이블 테이블 -->
-        <div class="overflow-x-auto rounded-lg border border-gray-200">
-            <table class="w-full text-left border-collapse bg-white text-sm">
-                <thead class="bg-gray-50 text-gray-700 font-semibold uppercase border-b border-gray-200">
-                    <tr>
-                        <th class="px-6 py-4">순위</th>
-                        <th class="px-6 py-4">닉네임</th>
-                        <th class="px-6 py-4">4강 진출 예측 팀</th>
-                        <th class="px-6 py-4 text-center">🥇 우승</th>
-                        <th class="px-6 py-4 text-center">🥈 준우승</th>
-                        <th class="px-6 py-4 text-center">총점</th>
-                        <th class="px-6 py-4 text-center">제출 시간</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody" class="divide-y divide-gray-100">
-                    <tr>
-                        <td colspan="7" class="px-6 py-10 text-center text-gray-500">데이터를 불러오는 중입니다...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- 랭킹 테이블 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-gray-50 text-gray-700 font-semibold uppercase border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4">순위</th>
+                            <th class="px-6 py-4">닉네임</th>
+                            <th class="px-6 py-4">4강 진출 예측 팀</th>
+                            <th class="px-6 py-4 text-center">🥇 우승</th>
+                            <th class="px-6 py-4 text-center">🥈 준우승</th>
+                            <th class="px-6 py-4 text-center">총점</th>
+                            <th class="px-6 py-4 text-center">제출 시간</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody" class="divide-y divide-gray-100">
+                        <tr>
+                            <td colspan="7" class="px-6 py-10 text-center text-gray-500">데이터를 불러오는 중입니다...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        // Supabase의 UTC 시간 스트링을 로컬 한국 시간 "MM/DD HH:mm" 포맷으로 변환하는 함수
         function formatDate(isoString) {
             if (!isoString) return "-";
             const date = new Date(isoString);
@@ -63,13 +116,55 @@
             const tbody = document.getElementById('leaderboardBody');
 
             try {
-                // 백엔드 API 서버로부터 실시간 스코어 연산 데이터 획득
                 const res = await fetch('/api/results'); 
                 const data = await res.json(); 
 
-                // 백엔드 반환 규격인 data.results 배열 추출
                 const predictions = data.results || []; 
+                const actual = data.actualResult || { semiFinals: [], winner: "", runnerUp: "" };
 
+                // 1. [상단 결과 카드 동적 업데이트]
+                document.getElementById('officialWinner').innerText = actual.winner ? `🎉 ${actual.winner}` : '결정 대기 중';
+                document.getElementById('officialRunnerUp').innerText = actual.runnerUp ? actual.runnerUp : '결정 대기 중';
+                document.getElementById('officialSemiFinals').innerText = actual.semiFinals && actual.semiFinals.length > 0 
+                    ? actual.semiFinals.join(', ') 
+                    : '진행 중';
+
+                // 2. [로그인 유저 실시간 일대일 비교 분석 보드 제어]
+                const myData = predictions.find(p => p.nickname === myNickname);
+                const comparisonBoard = document.getElementById('myComparisonBoard');
+                
+                if (myData) {
+                    comparisonBoard.classList.remove('hidden');
+                    document.getElementById('myUsernameDisplay').innerText = myNickname;
+                    
+                    // 4강 적중 계산
+                    const matchingSemis = myData.semiFinals.filter(team => actual.semiFinals.includes(team));
+                    document.getElementById('myMatchingSemis').innerHTML = matchingSemis.length > 0 
+                        ? `${matchingSemis.join(', ')} <span class="text-xs text-green-300">(+${matchingSemis.length * 10}점)</span>` 
+                        : '적중 없음 (0점)';
+                    
+                    // 우승 적중 여부
+                    if (!actual.winner) {
+                        document.getElementById('myWinnerStatus').innerText = `대기 중 (${myData.winner})`;
+                    } else {
+                        document.getElementById('myWinnerStatus').innerHTML = myData.winner === actual.winner 
+                            ? `🎯 적중 (${myData.winner}) <span class="text-xs text-green-300">(+40점)</span>` 
+                            : `❌ 불일치 (예측: ${myData.winner})`;
+                    }
+
+                    // 준우승 적중 여부
+                    if (!actual.runnerUp) {
+                        document.getElementById('myRunnerStatus').innerText = `대기 중 (${myData.runnerUp})`;
+                    } else {
+                        document.getElementById('myRunnerStatus').innerHTML = myData.runnerUp === actual.runnerUp 
+                            ? `🎯 적중 (${myData.runnerUp}) <span class="text-xs text-green-300">(+30점)</span>` 
+                            : `❌ 불일치 (예측: ${myData.runnerUp})`;
+                    }
+                } else {
+                    comparisonBoard.classList.add('hidden');
+                }
+
+                // 3. [리더보드 테이블 렌더링]
                 tbody.innerHTML = '';
 
                 if (predictions.length === 0) {
@@ -77,16 +172,27 @@
                     return;
                 }
 
-                // 루프를 돌며 실시간으로 테이블 행(Row) 동적 생성
                 predictions.forEach((user, index) => {
                     const isMe = user.nickname === myNickname;
-                    const rowClass = isMe ? 'bg-yellow-50 font-semibold' : 'hover:bg-gray-50';
-                    
-                    // 상위 3명에게는 특별 메달 이모지 부여
+                    const rowClass = isMe ? 'bg-yellow-50 font-semibold border-2 border-yellow-300' : 'hover:bg-gray-50';
                     const rankBadge = index === 0 ? '🥇 1등' : index === 1 ? '🥈 2등' : index === 2 ? '🥉 3등' : `${index + 1}등`;
                     
-                    // 배열로 저장된 4강 진출팀을 텍스트로 치환
-                    const teamsText = user.semiFinals ? user.semiFinals.filter(v => v).join(', ') : '-';
+                    // 4강 리스트 컴파일 및 적중 시 체크 처리
+                    const teamsMarkup = user.semiFinals ? user.semiFinals.map(team => {
+                        const isHit = actual.semiFinals.includes(team);
+                        return isHit 
+                            ? `<span class="inline-block bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded font-medium border border-green-300">✓ ${team}</span>`
+                            : `<span class="text-gray-600">${team}</span>`;
+                    }).join(', ') : '-';
+
+                    // 우승/준우승 실시간 하이라이팅 마크업
+                    const winnerMarkup = actual.winner && user.winner === actual.winner
+                        ? `<span class="text-green-600 font-black">✓ ${user.winner}</span>`
+                        : `<span>${user.winner || '-'}</span>`;
+
+                    const runnerMarkup = actual.runnerUp && user.runnerUp === actual.runnerUp
+                        ? `<span class="text-green-600 font-black">✓ ${user.runnerUp}</span>`
+                        : `<span>${user.runnerUp || '-'}</span>`;
 
                     tbody.innerHTML += `
                         <tr class="${rowClass} transition-colors">
@@ -94,12 +200,12 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
                                     <span>${user.nickname}</span>
-                                    ${isMe ? '<span class="bg-yellow-200 text-yellow-800 text-xs px-2 py-0.5 rounded-full font-bold">MY</span>' : ''}
+                                    ${isMe ? '<span class="bg-yellow-200 text-yellow-800 text-xs px-2 py-0.5 rounded-full font-bold shadow-sm">MY</span>' : ''}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-gray-600">${teamsText}</td>
-                            <td class="px-6 py-4 text-center font-bold text-amber-600">${user.winner || '-'}</td>
-                            <td class="px-6 py-4 text-center font-bold text-gray-500">${user.runnerUp || '-'}</td>
+                            <td class="px-6 py-4"><div class="flex flex-wrap gap-1.5 items-center">${teamsMarkup}</div></td>
+                            <td class="px-6 py-4 text-center font-bold text-amber-600">${winnerMarkup}</td>
+                            <td class="px-6 py-4 text-center font-bold text-gray-500">${runnerMarkup}</td>
                             <td class="px-6 py-4 text-center font-extrabold text-blue-600 text-base">${user.score || 0}점</td>
                             <td class="px-6 py-4 text-center text-xs text-gray-500">${formatDate(user.timestamp)}</td>
                         </tr>
@@ -107,12 +213,11 @@
                 });
 
             } catch (error) {
-                console.error("대시보드 화면 데이터 바인딩 실패:", error);
+                console.error("대시보드 UI 하이라이트 바인딩 에러:", error);
                 tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-10 text-center text-red-500 font-semibold">데이터를 가져오는 중 오류가 발생했습니다.</td></tr>`;
             }
         }
 
-        // 윈도우 로딩 완료 즉시 대시보드 함수 트리거
         window.onload = loadDashboard;
     </script>
 </body>
