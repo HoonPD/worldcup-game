@@ -126,24 +126,27 @@
             });
         });
 
+        // index.html의 submit 이벤트 리스너 부분을 아래처럼 변경해 주세요.
         document.getElementById('predictForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // 백엔드 백업 구조와 동일하게 [프랑스, 스페인, 매치3, 매치4] 구조로 배열 매칭 완료
             const semiFinals = [match1Value, match2Value, ...Array.from(semiSelects).map(s => s.value)];
             const nickname = document.getElementById('nickname').value;
             const winner = winnerSelect.value;
             const runnerUp = runnerUpSelect.value;
-
+            
+            // 💡 현재 시간을 ISO 형식(예: 2026-07-11T07:15:00.000Z)으로 생성합니다.
+            const submittedAt = new Date().toISOString(); 
+        
             try {
                 const res = await fetch('/api/predict', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nickname, semiFinals, winner, runnerUp })
+                    // 💡 body에 submittedAt을 추가해서 백엔드로 넘겨줍니다.
+                    body: JSON.stringify({ nickname, semiFinals, winner, runnerUp, submittedAt }) 
                 });
                 const data = await res.json();
                 
-                // 대시보드 하이라이트를 위해 닉네임을 브라우저 메모리에 보관합니다.
                 if(data.success) {
                     localStorage.setItem('worldcup_nickname', nickname);
                 }
