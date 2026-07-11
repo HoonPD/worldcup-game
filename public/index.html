@@ -32,23 +32,29 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <span class="block text-xs text-gray-500 mb-1">매치 1 (확정)</span>
-                        <!-- ⚠️ disabled 대신 hidden input과 일반 텍스트 박스로 안전하게 처리 -->
                         <div class="p-2 border rounded w-full bg-gray-100 text-gray-600 font-bold">프랑스 (승리)</div>
                         <input type="hidden" id="match1" value="프랑스">
                     </div>
                     <div>
                         <span class="block text-xs text-gray-500 mb-1">매치 2 (확정)</span>
-                        <!-- ⚠️ disabled 대신 hidden input과 일반 텍스트 박스로 안전하게 처리 -->
                         <div class="p-2 border rounded w-full bg-gray-100 text-gray-600 font-bold">스페인 (승리)</div>
                         <input type="hidden" id="match2" value="스페인">
                     </div>
                     <div>
                         <span class="block text-xs text-gray-500 mb-1">매치 3</span>
-                        <select class="semi p-2 border rounded w-full" required><option value="">선택하세요</option><option>노르웨이</option><option>잉글랜드</option></select>
+                        <select class="semi p-2 border rounded w-full" required>
+                            <option value="">선택하세요</option>
+                            <option>노르웨이</option>
+                            <option>잉글랜드</option>
+                        </select>
                     </div>
                     <div>
                         <span class="block text-xs text-gray-500 mb-1">매치 4</span>
-                        <select class="semi p-2 border rounded w-full" required><option value="">선택하세요</option><option>아르헨티나</option><option>스위스</option></select>
+                        <select class="semi p-2 border rounded w-full" required>
+                            <option value="">선택하세요</option>
+                            <option>아르헨티나</option>
+                            <option>스위스</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -59,11 +65,15 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block font-medium text-gray-700 mb-1">우승 팀 (40점)</label>
-                        <select id="winner" class="w-full p-2 border-2 border-yellow-500 bg-white rounded font-bold text-yellow-900" required><option value="">선택하세요</option></select>
+                        <select id="winner" class="w-full p-2 border-2 border-yellow-500 bg-white rounded font-bold text-yellow-900" required>
+                            <option value="">선택하세요</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block font-medium text-gray-700 mb-1">준우승 팀 (20점)</label>
-                        <select id="runnerUp" class="w-full p-2 border rounded bg-white" required><option value="">선택하세요</option></select>
+                        <select id="runnerUp" class="w-full p-2 border rounded bg-white" required>
+                            <option value="">선택하세요</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -76,12 +86,14 @@
     <script>
         const semiSelects = document.querySelectorAll('.semi');
         const match1Value = document.getElementById('match1').value;
+        const match2Value = document.getElementById('match2').value; // 스페인 값 연동 완료
+
         const winnerSelect = document.getElementById('winner');
         const runnerUpSelect = document.getElementById('runnerUp');
 
         function updateFinalists() {
-            // 프랑스, 스페인을 기본적으로 포함하여 4팀 목록을 생성
-            const selectedTeams = [match1Value, ...Array.from(semiSelects).map(s => s.value)].filter(v => v);
+            // 프랑스, 스페인을 기본 포함하고 선택된 매치 3, 4번 팀을 병합합니다.
+            const selectedTeams = [match1Value, match2Value, ...Array.from(semiSelects).map(s => s.value)].filter(v => v);
             const currentWinner = winnerSelect.value;
             const currentRunner = runnerUpSelect.value;
 
@@ -97,13 +109,13 @@
             runnerUpSelect.value = selectedTeams.includes(currentRunner) ? currentRunner : "";
         }
 
-        // 초기 실행 (프랑스 우승/준우승 목록에 자동 선반영)
+        // 초기 실행 (프랑스, 스페인이 목록에 자동 선반영되어 결승 후보가 채워집니다)
         updateFinalists();
 
         semiSelects.forEach(s => s.addEventListener('change', updateFinalists));
 
         winnerSelect.addEventListener('change', () => {
-            const selectedTeams = [match1Value, ...Array.from(semiSelects).map(s => s.value)].filter(v => v);
+            const selectedTeams = [match1Value, match2Value, ...Array.from(semiSelects).map(s => s.value)].filter(v => v);
             const winner = winnerSelect.value;
             
             runnerUpSelect.innerHTML = '<option value="">선택하세요</option>';
@@ -117,8 +129,8 @@
         document.getElementById('predictForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // 전송용 배열에 고정된 프랑스를 맨 앞에 수동 결합
-            const semiFinals = [match1Value, ...Array.from(semiSelects).map(s => s.value)];
+            // 백엔드 백업 구조와 동일하게 [프랑스, 스페인, 매치3, 매치4] 구조로 배열 매칭 완료
+            const semiFinals = [match1Value, match2Value, ...Array.from(semiSelects).map(s => s.value)];
             const nickname = document.getElementById('nickname').value;
             const winner = winnerSelect.value;
             const runnerUp = runnerUpSelect.value;
@@ -130,6 +142,12 @@
                     body: JSON.stringify({ nickname, semiFinals, winner, runnerUp })
                 });
                 const data = await res.json();
+                
+                // 대시보드 하이라이트를 위해 닉네임을 브라우저 메모리에 보관합니다.
+                if(data.success) {
+                    localStorage.setItem('worldcup_nickname', nickname);
+                }
+                
                 alert(data.message);
                 if(data.success) location.href = 'dashboard.html';
             } catch (error) {
