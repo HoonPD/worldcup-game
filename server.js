@@ -19,7 +19,7 @@ const DEADLINE = new Date('2026-07-12T06:00:00+09:00');
 
 // 🏆 [실시간 경기 결과 입력창] 경기가 끝날 때마다 이 객체만 업데이트해 주시면 됩니다.
 const ACTUAL_RESULT = {
-    semiFinals: ["프랑스","스페인"], // 예시: ["프랑스", "스페인", "잉글랜드", "네덜란드"]
+    semiFinals: ["프랑스", "스페인"], // 예시: ["프랑스", "스페인", "잉글랜드", "네덜란드"]
     winner: "",            // 최종 우승국
     runnerUp: ""           // 최종 준우승국
 };
@@ -48,13 +48,14 @@ function calculateScore(pred) {
     return score;
 }
 
-// 1. 예측 제출 API (DB에 Upsert 방식으로 안전하게 저장)
+// 1. 예측 제출 API (DB에 Upsert 방식으로 안전하게 저장 및 시간 동기화)
 app.post('/api/predict', async (req, res) => {
     if (new Date() > DEADLINE) {
         return res.status(403).json({ success: false, message: "마감 시간이 지나 제출할 수 없습니다." });
     }
 
-    const { nickname, semiFinals, winner, runnerUp } = req.body;
+    // 프론트엔드에서 넘어온 submittedAt 추가 수신
+    const { nickname, semiFinals, winner, runnerUp, submittedAt } = req.body;
     if (!nickname || !semiFinals || semiFinals.length !== 4 || !winner || !runnerUp) {
         return res.status(400).json({ success: false, message: "모든 항목을 올바르게 입력해주세요." });
     }
@@ -76,7 +77,8 @@ app.post('/api/predict', async (req, res) => {
                 semi_finals: semiFinals,
                 winner,
                 runner_up: runnerUp,
-                created_at: new Date()
+                // 클라이언트 제출 시간이 유효하면 파싱하여 저장하고 없으면 서버 시간 반영
+                created_at: submittedAt ? new Date(submittedAt) : new Date()
             }, { onConflict: 'nickname' });
 
         if (error) throw error;
@@ -98,7 +100,7 @@ app.get('/api/results', async (req, res) => {
 
         if (error) throw error;
 
-        // 최신 ACTUAL_RESULT를 바탕으로 실시간 점수 계산
+        // 최신 ACTUAL_RESULT를 바탕으로 실시간 점수 계산 및 프론트 전달 규격 조율
         const resultsWithScores = predictions.map(p => ({
             nickname: p.nickname,
             semiFinals: p.semi_finals,
