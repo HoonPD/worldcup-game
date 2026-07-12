@@ -7,21 +7,24 @@
     <!-- Tailwind CSS 최신 브라우저 컴파일러 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* 🖼️ 위키미디어 공식 분산 스토리지의 신뢰성 높은 고해상도 경기장 배경 매핑 */
-        .worldcup-official-bg {
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/Soccer_field_-_Allianz_Arena.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+        /* 🚨 Tailwind v4의 임의 클래스 오류를 우회하기 위해 순수 CSS로 배경 완벽 제어 */
+        body {
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/Soccer_field_-_Allianz_Arena.jpg') !important;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
-<body class="worldcup-official-bg min-h-screen antialiased text-slate-800 flex items-center justify-center p-3 sm:p-4">
+<body class="antialiased text-slate-800 flex items-center justify-center p-3 sm:p-4">
 
-    <!-- 💡 투명도 조절 마스크를 완전히 제거하여 입력창과 메인 보드가 100% 또렷하게 보입니다. -->
+    <!-- 💡 입력창이 묻히지 않도록 인덱스 보드는 투명도를 주지 않고 100% 명확하게 처리했습니다. -->
 
-    <!-- 메인 대시보드 컨테이너 (배경에 묻히지 않도록 완전 불투명 bg-white 처리) -->
+    <!-- 메인 대시보드 컨테이너 (스크롤이 필요 없는 한 화면 콤팩트 레이아웃) -->
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-5xl w-full overflow-hidden z-10 grid grid-cols-1 lg:grid-cols-12 relative">
         
         <!-- 🎯 [왼쪽 사이드] 타이틀 및 실시간 대진 현황 (푸른색 테마 음영 반영) -->
@@ -36,7 +39,7 @@
                 <p class="text-blue-200 text-xs mt-1 font-medium">실시간 스코어를 기반으로 매칭을 완성하세요.</p>
             </div>
             
-            <!-- ⚽ [푸른색 음영 처리] 이미 결정된 결과 부분 -->
+            <!-- ⚽ [푸른색 음영 처리] 이미 결정된 결과 부분 (국가 마크 제거) -->
             <div class="bg-blue-950/70 rounded-xl p-4 border border-blue-500/40 shadow-xs mt-4 lg:mt-0 space-y-3">
                 <div class="flex items-center gap-1.5 border-b border-blue-500/30 pb-2">
                     <span class="flex h-1.5 w-1.5 relative">
@@ -87,7 +90,7 @@
                            placeholder="리더보드에 등록될 이름을 적어주세요">
                 </div>
 
-                <!-- 🟦 [푸른색 음영 처리] 이미 확정된 4강 진출팀 안내 구역 -->
+                <!-- 🟦 [푸른색 음영 처리] 이미 확정된 4강 진출팀 안내 구역 (국가 마크 제거) -->
                 <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl shadow-xs">
                     <label class="block font-bold text-blue-950 text-xs mb-2 tracking-tight">🔷 4강 진출 확정 국가 (결정 완료)</label>
                     <div class="grid grid-cols-4 gap-2 text-center">
