@@ -220,5 +220,163 @@
 
         window.onload = loadDashboard;
     </script>
+    <!-- ─── 여기서부터 추가되는 영역입니다 ─── -->
+
+        <!-- 🏆 역대 월드컵 우승국 카드 섹션 -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
+                <span class="text-xl">📜</span>
+                <h2 class="text-xl font-bold text-gray-800">역대 월드컵 우승국 일람 (최근 순)</h2>
+            </div>
+            
+            <!-- 가로 스크롤이 가능한 카드 컨테이너 -->
+            <div class="flex gap-4 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-gray-300">
+                <!-- 2022 카타르 -->
+                <div class="flex-shrink-0 w-40 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 text-center shadow-sm">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">2022 카타르</span>
+                    <div class="text-3xl my-2">🇦🇷</div>
+                    <p class="font-bold text-gray-800">아르헨티나</p>
+                </div>
+                <!-- 2018 러시아 -->
+                <div class="flex-shrink-0 w-40 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 text-center shadow-sm">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">2018 러시아</span>
+                    <div class="text-3xl my-2">🇫🇷</div>
+                    <p class="font-bold text-gray-800">프랑스</p>
+                </div>
+                <!-- 2014 브라질 -->
+                <div class="flex-shrink-0 w-40 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 text-center shadow-sm">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">2014 브라질</span>
+                    <div class="text-3xl my-2">🇩🇪</div>
+                    <p class="font-bold text-gray-800">독일</p>
+                </div>
+                <!-- 2010 남아공 -->
+                <div class="flex-shrink-0 w-40 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 text-center shadow-sm">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">2010 남아공</span>
+                    <div class="text-3xl my-2">🇪🇸</div>
+                    <p class="font-bold text-gray-800">스페인</p>
+                </div>
+                <!-- 2006 독일 -->
+                <div class="flex-shrink-0 w-40 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 text-center shadow-sm">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">2006 독일</span>
+                    <div class="text-3xl my-2">🇮🇹</div>
+                    <p class="font-bold text-gray-800">이탈리아</p>
+                </div>
+                <!-- 2002 한일 -->
+                <div class="flex-shrink-0 w-40 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 text-center shadow-sm">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">2002 한일</span>
+                    <div class="text-3xl my-2">🇧🇷</div>
+                    <p class="font-bold text-gray-800">브라질</p>
+                </div>
+                <!-- 1998 프랑스 -->
+                <div class="flex-shrink-0 w-40 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 text-center shadow-sm">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">1998 프랑스</span>
+                    <div class="text-3xl my-2">🇫🇷</div>
+                    <p class="font-bold text-gray-800">프랑스</p>
+                </div>
+                <!-- 1994 미국 -->
+                <div class="flex-shrink-0 w-40 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 text-center shadow-sm">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">1994 미국</span>
+                    <div class="text-3xl my-2">🇧🇷</div>
+                    <p class="font-bold text-gray-800">브라질</p>
+                </div>
+            </div>
+            <p class="text-right text-xs text-gray-400 mt-2">*가로로 스크롤하여 더 많은 대회를 볼 수 있습니다.</p>
+        </div>
+
+        <!-- 📊 국가별 최다 우승 랭킹 그래프 섹션 -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+            <div class="flex items-center gap-2 mb-6 border-b border-gray-100 pb-3">
+                <span class="text-xl">📊</span>
+                <h2 class="text-xl font-bold text-gray-800">명예의 전당: 국가별 최다 우승 랭킹</h2>
+            </div>
+            
+            <div class="space-y-4 max-w-3xl mx-auto">
+                <!-- 브라질 (5회) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-24 text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                        <span>🇧🇷</span> 브라질
+                    </div>
+                    <div class="flex-1 bg-gray-100 rounded-full h-7 overflow-hidden">
+                        <div class="bg-amber-500 h-full rounded-full flex items-center pl-3 text-xs font-black text-white transition-all duration-500" style="width: 100%">
+                            5회 우승
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 독일 (4회) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-24 text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                        <span>🇩🇪</span> 독일
+                    </div>
+                    <div class="flex-1 bg-gray-100 rounded-full h-7 overflow-hidden">
+                        <div class="bg-slate-700 h-full rounded-full flex items-center pl-3 text-xs font-black text-white transition-all duration-500" style="width: 80%">
+                            4회 우승
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 이탈리아 (4회) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-24 text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                        <span>🇮🇹</span> 이탈리아
+                    </div>
+                    <div class="flex-1 bg-gray-100 rounded-full h-7 overflow-hidden">
+                        <div class="bg-sky-600 h-full rounded-full flex items-center pl-3 text-xs font-black text-white transition-all duration-500" style="width: 80%">
+                            4회 우승
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 아르헨티나 (3회) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-24 text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                        <span>🇦🇷</span> 아르헨티나
+                    </div>
+                    <div class="flex-1 bg-gray-100 rounded-full h-7 overflow-hidden">
+                        <div class="bg-cyan-500 h-full rounded-full flex items-center pl-3 text-xs font-black text-white transition-all duration-500" style="width: 60%">
+                            3회 우승
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 프랑스 (2회) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-24 text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                        <span>🇫🇷</span> 프랑스
+                    </div>
+                    <div class="flex-1 bg-gray-100 rounded-full h-7 overflow-hidden">
+                        <div class="bg-blue-600 h-full rounded-full flex items-center pl-3 text-xs font-black text-white transition-all duration-500" style="width: 40%">
+                            2회 우승
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우루과이 (2회) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-24 text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                        <span>🇺🇾</span> 우루과이
+                    </div>
+                    <div class="flex-1 bg-gray-100 rounded-full h-7 overflow-hidden">
+                        <div class="bg-blue-400 h-full rounded-full flex items-center pl-3 text-xs font-black text-white transition-all duration-500" style="width: 40%">
+                            2회 우승
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 잉글랜드 / 스페인 (각 1회) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-24 text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                        <span>기타 국</span>
+                    </div>
+                    <div class="flex-1 bg-gray-100 rounded-full h-7 overflow-hidden">
+                        <div class="bg-gray-400 h-full rounded-full flex items-center pl-3 text-xs font-medium text-white transition-all duration-500" style="width: 20%">
+                            잉글랜드(1회), 스페인(1회)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── 여기까지 추가되는 영역입니다 ─── -->
 </body>
 </html>
