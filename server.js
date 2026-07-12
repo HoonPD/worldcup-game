@@ -14,8 +14,8 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// [설정] 마감 시간: 8강 3경기 시작 시간 (2026년 7월 12일 오전 06:00 KST)
-const DEADLINE = new Date('2026-07-12T06:00:00+09:00');
+// [설정] 마감 시간: 4강 1경기 시작 시간 (2026년 7월 15일 오전 04:00 KST)
+const DEADLINE = new Date('2026-07-15T04:00:00+09:00');
 
 // 🏆 [실시간 경기 결과 입력창] 경기가 끝날 때마다 이 객체만 업데이트해 주시면 됩니다.
 const ACTUAL_RESULT = {
